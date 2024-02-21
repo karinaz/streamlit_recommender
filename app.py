@@ -58,6 +58,7 @@ def find_similar_articles_html(user_input, articles_cleaned, combined_features_c
 
 # Streamlit app
 def main():
+    st.image('image.jpg', use_column_width=True)
     st.title("Guide on mental health")
 
     # Sidebar for user input
