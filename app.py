@@ -2,7 +2,6 @@ import streamlit as st
 import pandas as pd
 from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.feature_extraction.text import CountVectorizer
-from sklearn.feature_extraction.text import TfidfVectorizer
 
 # Loading articles_cleaned dataset
 articles_cleaned = pd.read_csv('articles_cleaned.csv')
@@ -18,13 +17,6 @@ def find_similar_articles_html(user_input, articles_cleaned, combined_features_c
     count_matrix = cv_char.fit_transform(features_list)
     # Calculate cosine similarity for CountVectorizer
     cosine_sim = cosine_similarity(count_matrix)
-    
-    # Apply TfidfVectorizer
-#    tfidf_vectorizer = TfidfVectorizer(analyzer='char_wb', ngram_range=(2, 2))
-#    X_tfidf = tfidf_vectorizer.fit_transform(features_list)
-
-    # Calculate cosine similarity for TfidfVectorizer
-#    cosine_sim = cosine_similarity(X_tfidf)
 
     # Get the top N similar articles, excluding the last one (which is the user input)
     sorted_suggested_articles = sorted(list(enumerate(cosine_sim[-1])), key=lambda x: x[1], reverse=True)[1:top_n+1]
@@ -32,11 +24,6 @@ def find_similar_articles_html(user_input, articles_cleaned, combined_features_c
 
     # Retrieve the articles from the original dataset
     selected_articles = articles_cleaned.loc[suggested_ids]
-
-    # Optionally, create a shortened 'content_preview' if needed
-    selected_articles['content_preview'] = selected_articles['content'].apply(lambda x: x[:100] if isinstance(x, str) else '')
-
-
 
     # Create an HTML outputs
     html_output = '<div>'
@@ -58,14 +45,14 @@ def find_similar_articles_html(user_input, articles_cleaned, combined_features_c
 
 # Streamlit app
 def main():
-    st.image('image.jpg', use_column_width=True)
-    st.title("Guide on mental health")
+    # Sidebar for input
+    st.sidebar.image('image.jpg', width=400)  # Adjust the width as needed
+    st.sidebar.markdown("### How do you feel? What are you worried about? Which topic you want to explore? Find your answer here:")
+    user_input = st.sidebar.text_input("", placeholder="Enter your feelings or topic here...")
 
-    # Sidebar for user input
-    with st.sidebar:
-        user_input = st.text_input("How do you feel? What are you worried about? Which topic you want to explore? Find your answer here:")
+    # Main area for title and article display
+    st.title("Guide on Mental Health")
 
-    # Main page for displaying results
     if user_input:
         with st.spinner('Finding similar articles...'):
             html_content = find_similar_articles_html(user_input, articles_cleaned)
