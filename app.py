@@ -13,7 +13,7 @@ def find_similar_articles_html(user_input, articles_cleaned, combined_features_c
     features_list.append(user_input)
 
     # Apply CountVectorizer
-    cv_char = CountVectorizer(analyzer='word', ngram_range=(1, 1), stop_words='english')
+    cv_char = CountVectorizer(analyzer='word', ngram_range=(1, 2), stop_words='english')
     count_matrix = cv_char.fit_transform(features_list)
     # Calculate cosine similarity for CountVectorizer
     cosine_sim = cosine_similarity(count_matrix)
